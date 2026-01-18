@@ -11,6 +11,31 @@ export const Web3Provider = ({ children }) => {
     const [signer, setSigner] = useState(null);
     const [network, setNetwork] = useState(null);
 
+    useEffect(() => {
+        const checkConnection = async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const _provider = new ethers.BrowserProvider(window.ethereum);
+                    const accounts = await _provider.listAccounts();
+                    if (accounts.length > 0) {
+                        const _signer = await _provider.getSigner();
+                        const _network = await _provider.getNetwork();
+                        setAccount(accounts[0].address);
+                        setProvider(_provider);
+                        setSigner(_signer);
+                        setNetwork(_network);
+                    }
+                } catch (error) {
+                    console.error("Auto-connect error:", error);
+                }
+            }
+        };
+
+        // Small delay to ensure MetaMask injection
+        const timer = setTimeout(checkConnection, 500);
+        return () => clearTimeout(timer);
+    }, []);
+
     const connectWallet = async () => {
         console.log("Attempting to connect wallet...");
         if (typeof window.ethereum !== 'undefined') {
