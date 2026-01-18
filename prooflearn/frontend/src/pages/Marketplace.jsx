@@ -10,7 +10,8 @@ const Marketplace = () => {
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const res = await axios.get('http://localhost:5000/api/tasks');
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await axios.get(`${apiUrl}/api/tasks`);
             setTasks(res.data);
         };
         fetchTasks();

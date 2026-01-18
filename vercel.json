@@ -1,0 +1,18 @@
+{
+    "version": 2,
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/prooflearn/backend/server.js"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/prooflearn/frontend/dist/$1"
+        }
+    ],
+    "functions": {
+        "prooflearn/backend/server.js": {
+            "includeFiles": "prooflearn/backend/**"
+        }
+    }
+}

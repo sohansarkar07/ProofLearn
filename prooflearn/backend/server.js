@@ -31,11 +31,26 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/users', userRoutes);
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn')
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log('MongoDB Connection Error:', err));
+// DB Connection Helper (Cached)
+let cachedDb = null;
+const connectDB = async () => {
+    if (mongoose.connection.readyState >= 1) return;
+    return mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn')
+        .then(() => console.log('MongoDB Connected'))
+        .catch(err => console.log('MongoDB Connection Error:', err));
+};
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Initial connection
+connectDB();
+
+// Root route
+app.get('/', (req, res) => res.json({ message: "ProofLearn API is running" }));
+
+// Only listen if running locally
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
