@@ -4,15 +4,35 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, ChevronRight, Star, Clock, Trophy } from 'lucide-react';
 
+// Failsafe Mock Data
+const MOCK_TASKS = [
+    { id: 1, name: "Web3 Intro", description: "Deploy your first contract on Sepolia", rewardAmount: 100, isActive: true },
+    { id: 2, name: "DeFi Master", description: "Implement a simple swap", rewardAmount: 500, isActive: true },
+    { id: 3, name: "NFT Creator", description: "Create an NFT collection", rewardAmount: 300, isActive: true }
+];
+
 const Marketplace = () => {
     const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const apiUrl = import.meta.env.VITE_API_URL || '';
-            const res = await axios.get(`${apiUrl}/api/tasks`);
-            setTasks(res.data);
+            try {
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                const res = await axios.get(`${apiUrl}/api/tasks`);
+                if (res.data && res.data.length > 0) {
+                    setTasks(res.data);
+                } else {
+                    console.log("Empty tasks from API, using fallback");
+                    setTasks(MOCK_TASKS);
+                }
+            } catch (error) {
+                console.error("API Error fetching tasks, using fallback:", error);
+                setTasks(MOCK_TASKS);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchTasks();
     }, []);
@@ -84,9 +104,15 @@ const Marketplace = () => {
                 ))}
             </div>
 
-            {tasks.length === 0 && (
+            {loading && tasks.length === 0 && (
                 <div className="text-center py-24 glass-panel border-dashed border-white/5">
                     <p className="text-slate-500 italic text-xl">Loading skill missions from the database...</p>
+                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mt-4" />
+                </div>
+            )}
+            {!loading && tasks.length === 0 && (
+                <div className="text-center py-24 glass-panel border-dashed border-white/5">
+                    <p className="text-slate-500 italic text-xl">No missions currently available. Check back soon!</p>
                 </div>
             )}
         </div>

@@ -36,7 +36,10 @@ const connectDB = async () => {
     try {
         if (mongoose.connection.readyState >= 1) return;
         console.log("Connecting to MongoDB...");
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn');
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn', {
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+        });
         console.log('MongoDB Connected successfully');
     } catch (err) {
         console.error('MongoDB Connection Error:', err);
