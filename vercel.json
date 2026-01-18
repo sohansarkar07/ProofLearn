@@ -7,7 +7,7 @@
         },
         {
             "source": "/(.*)",
-            "destination": "/prooflearn/frontend/dist/$1"
+            "destination": "/prooflearn/frontend/dist/index.html"
         }
     ],
     "functions": {
