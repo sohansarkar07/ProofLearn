@@ -1,0 +1,13 @@
+{
+    "name": "prooflearn-root",
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+        "frontend": "cd prooflearn/frontend && npm run dev",
+        "backend": "cd prooflearn/backend && node server.js",
+        "install-all": "cd prooflearn/frontend && npm install && cd ../backend && npm install && cd .."
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    }
+}
