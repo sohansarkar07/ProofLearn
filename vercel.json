@@ -3,7 +3,7 @@
     "rewrites": [
         {
             "source": "/api/(.*)",
-            "destination": "/prooflearn/backend/server.js"
+            "destination": "/api/index.js"
         },
         {
             "source": "/(.*)",
@@ -11,7 +11,7 @@
         }
     ],
     "functions": {
-        "prooflearn/backend/server.js": {
+        "api/index.js": {
             "includeFiles": "prooflearn/backend/**"
         }
     }
