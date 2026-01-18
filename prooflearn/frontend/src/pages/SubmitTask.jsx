@@ -16,7 +16,7 @@ const SubmitTask = () => {
         e.preventDefault();
         if (!account) return alert("Please connect wallet!");
 
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL || '';
         try {
             await axios.post(`${apiUrl}/api/submissions`, {
                 taskId,

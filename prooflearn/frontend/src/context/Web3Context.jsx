@@ -12,22 +12,30 @@ export const Web3Provider = ({ children }) => {
     const [network, setNetwork] = useState(null);
 
     const connectWallet = async () => {
-        if (window.ethereum) {
+        console.log("Attempting to connect wallet...");
+        if (typeof window.ethereum !== 'undefined') {
             try {
                 const _provider = new ethers.BrowserProvider(window.ethereum);
                 const accounts = await _provider.send("eth_requestAccounts", []);
                 const _signer = await _provider.getSigner();
                 const _network = await _provider.getNetwork();
 
+                console.log("Connected account:", accounts[0]);
                 setAccount(accounts[0]);
                 setProvider(_provider);
                 setSigner(_signer);
                 setNetwork(_network);
             } catch (error) {
-                console.error("User denied account access", error);
+                console.error("Wallet connection error:", error);
+                if (error.code === 4001) {
+                    alert("Connection rejected by user.");
+                } else {
+                    alert("An error occurred during wallet connection.");
+                }
             }
         } else {
-            alert("Please install MetaMask!");
+            console.warn("MetaMask not found");
+            alert("Please install MetaMask to use this feature!");
         }
     };
 
