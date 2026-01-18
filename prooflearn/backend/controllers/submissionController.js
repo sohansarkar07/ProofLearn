@@ -6,9 +6,12 @@ require('dotenv').config();
 // Contract info
 let SkillCertificateABI;
 try {
-    SkillCertificateABI = require('../../artifacts/contracts/SkillCertificate.sol/SkillCertificate.json').abi;
+    // Robust path for Vercel and Local
+    const path = require('path');
+    const abiPath = path.resolve(__dirname, '../../artifacts/contracts/SkillCertificate.sol/SkillCertificate.json');
+    SkillCertificateABI = require(abiPath).abi;
 } catch (error) {
-    console.warn("ABI not found. Please run 'npx hardhat compile'.");
+    console.warn("ABI not found. Please run 'npx hardhat compile' or check artifacts path.");
 }
 const certificateAddress = process.env.CERTIFICATE_CONTRACT_ADDRESS;
 
@@ -27,8 +30,14 @@ exports.getSubmissions = async (req, res) => {
 };
 
 exports.submitTask = async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ message: "Database not connected. Please try again in a few seconds." });
+    }
     const { taskId, learnerAddress, proofUrl } = req.body;
     try {
+        if (!taskId || !learnerAddress || !proofUrl) {
+            return res.status(400).json({ message: "Missing required fields: taskId, learnerAddress, or proofUrl" });
+        }
         const proofHash = crypto.createHash('sha256').update(proofUrl + learnerAddress + Date.now()).digest('hex');
 
         const newSubmission = new Submission({

@@ -11,7 +11,8 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         const fetchSubmissions = async () => {
-            const res = await axios.get('http://localhost:5000/api/submissions');
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await axios.get(`${apiUrl}/api/submissions`);
             setSubmissions(res.data);
             setStats({
                 total: res.data.length,
@@ -24,7 +25,8 @@ const AdminDashboard = () => {
 
     const handleVerify = async (id, status, learner, taskId) => {
         try {
-            await axios.patch('http://localhost:5000/api/submissions/verify', {
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            await axios.patch(`${apiUrl}/api/submissions/verify`, {
                 submissionId: id,
                 status,
                 skillName: "Web3 Developer",
@@ -136,8 +138,8 @@ const AdminDashboard = () => {
                                                 </td>
                                                 <td className="py-5 px-6 font-bold text-[10px]">
                                                     <span className={`px-2 py-1 rounded inline-block ${sub.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' :
-                                                            sub.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                                                                'bg-red-500/10 text-red-500 border border-red-500/20'
+                                                        sub.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                                                            'bg-red-500/10 text-red-500 border border-red-500/20'
                                                         }`}>
                                                         {sub.status.toUpperCase()}
                                                     </span>

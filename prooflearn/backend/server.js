@@ -35,11 +35,12 @@ app.use('/api/users', userRoutes);
 const connectDB = async () => {
     try {
         if (mongoose.connection.readyState >= 1) return;
+        const uri = process.env.MONGODB_URI;
+        if (!uri) {
+            console.warn("MONGODB_URI is not defined in environment variables. Falling back to localhost.");
+        }
         console.log("Connecting to MongoDB...");
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn', {
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000,
-        });
+        await mongoose.connect(uri || 'mongodb://localhost:27017/prooflearn');
         console.log('MongoDB Connected successfully');
     } catch (err) {
         console.error('MongoDB Connection Error:', err);
