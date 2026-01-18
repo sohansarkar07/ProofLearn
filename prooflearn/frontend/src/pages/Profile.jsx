@@ -11,8 +11,9 @@ const Profile = () => {
     useEffect(() => {
         if (account) {
             const fetchMyData = async () => {
-                const res = await axios.get('http://localhost:5000/api/submissions');
-                setMySubmissions(res.data.filter(s => s.learnerAddress.toLowerCase() === account.toLowerCase()));
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                const res = await axios.get(`${apiUrl}/api/submissions`);
+                setMySubmissions(res.data.filter(s => s.learnerAddress?.toLowerCase() === account.toLowerCase()));
             };
             fetchMyData();
         }
@@ -136,8 +137,8 @@ const Profile = () => {
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className={`w-3 h-3 rounded-full ${sub.status === 'pending' ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]' :
-                                                sub.status === 'approved' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' :
-                                                    'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'
+                                            sub.status === 'approved' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' :
+                                                'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'
                                             }`} />
                                         <div>
                                             <p className="font-bold text-sm">Mission #{sub.taskId}</p>
@@ -146,8 +147,8 @@ const Profile = () => {
                                     </div>
                                     <div className="flex items-center gap-6">
                                         <span className={`px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest ${sub.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
-                                                sub.status === 'approved' ? 'bg-green-500/10 text-green-500' :
-                                                    'bg-red-500/10 text-red-500'
+                                            sub.status === 'approved' ? 'bg-green-500/10 text-green-500' :
+                                                'bg-red-500/10 text-red-500'
                                             }`}>
                                             {sub.status}
                                         </span>

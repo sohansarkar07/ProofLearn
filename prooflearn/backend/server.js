@@ -41,6 +41,20 @@ app.use('/api/tasks', ensureDB, taskRoutes);
 app.use('/api/submissions', ensureDB, submissionRoutes);
 app.use('/api/users', ensureDB, userRoutes);
 
+// Debug Route
+app.get('/api/test-db', async (req, res) => {
+    try {
+        await connectDB();
+        res.json({
+            status: 'connected',
+            readyState: mongoose.connection.readyState,
+            dbName: mongoose.connection.name
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message, stack: err.stack });
+    }
+});
+
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error("SERVER ERROR:", err);
@@ -79,8 +93,8 @@ const connectDB = async () => {
     }
 };
 
-// Initial connection
-connectDB();
+// Initial connection removed for serverless compatibility
+// connectDB();
 
 // Root route
 app.get('/', (req, res) => res.json({ message: "ProofLearn API is running" }));

@@ -26,10 +26,10 @@ const SubmitTask = () => {
             alert("Submission success! Waiting for admin verification.");
             navigate('/profile');
         } catch (error) {
-            console.error("Submission Error Details:", error.response?.data);
+            console.error("DEBUG - Submission Error Response:", error.response);
             const msg = error.response?.data?.message || "Submission failed";
             const details = error.response?.data?.details || error.response?.data?.error || error.message;
-            alert(`${msg}: ${details}`);
+            alert(`[ERROR] ${msg}\n\nDetails: ${typeof details === 'object' ? JSON.stringify(details) : details}`);
         } finally {
             setIsSubmitting(false);
         }
