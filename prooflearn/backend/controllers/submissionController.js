@@ -4,12 +4,14 @@ const { ethers } = require('ethers');
 require('dotenv').config();
 
 // Contract info
-let SkillCertificateABI;
+let SkillCertificateABI = [];
 try {
     // Robust path for Vercel and Local
     const path = require('path');
     const abiPath = path.resolve(__dirname, '../../artifacts/contracts/SkillCertificate.sol/SkillCertificate.json');
-    SkillCertificateABI = require(abiPath).abi;
+    if (require.resolve(abiPath)) {
+        SkillCertificateABI = require(abiPath).abi;
+    }
 } catch (error) {
     console.warn("ABI not found. Please run 'npx hardhat compile' or check artifacts path.");
 }

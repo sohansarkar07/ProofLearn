@@ -15,6 +15,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Middleware to ensure DB connection
+const ensureDB = async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        res.status(500).json({ message: "Database connection failed", error: err.message });
+    }
+};
+
 // Logging middleware
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
@@ -27,15 +37,28 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
-app.use('/api/tasks', taskRoutes);
-app.use('/api/submissions', submissionRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/tasks', ensureDB, taskRoutes);
+app.use('/api/submissions', ensureDB, submissionRoutes);
+app.use('/api/users', ensureDB, userRoutes);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error("SERVER ERROR:", err);
+    res.status(500).json({
+        message: "Internal Server Error",
+        error: process.env.NODE_ENV === 'production' ? "See logs for details" : err.message,
+        stack: process.env.NODE_ENV === 'production' ? null : err.stack
+    });
+});
 
 // DB Connection Helper (Cached)
 const connectDB = async () => {
     try {
         if (mongoose.connection.readyState >= 1) return;
         const uri = process.env.MONGODB_URI;
+        if (!uri && process.env.NODE_ENV === 'production') {
+            throw new Error("MONGODB_URI is missing in production environment variables.");
+        }
         if (!uri) {
             console.warn("MONGODB_URI is not defined in environment variables. Falling back to localhost.");
         }
