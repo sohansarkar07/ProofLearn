@@ -32,12 +32,15 @@ app.use('/api/submissions', submissionRoutes);
 app.use('/api/users', userRoutes);
 
 // DB Connection Helper (Cached)
-let cachedDb = null;
 const connectDB = async () => {
-    if (mongoose.connection.readyState >= 1) return;
-    return mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn')
-        .then(() => console.log('MongoDB Connected'))
-        .catch(err => console.log('MongoDB Connection Error:', err));
+    try {
+        if (mongoose.connection.readyState >= 1) return;
+        console.log("Connecting to MongoDB...");
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prooflearn');
+        console.log('MongoDB Connected successfully');
+    } catch (err) {
+        console.error('MongoDB Connection Error:', err);
+    }
 };
 
 // Initial connection

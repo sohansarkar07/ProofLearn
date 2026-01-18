@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Task = require('../models/Task');
 
 // Mock data for fallback
 const MOCK_TASKS = [
@@ -9,12 +10,14 @@ const MOCK_TASKS = [
 
 exports.getTasks = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
+        console.log("DB not ready, returning MOCK_TASKS");
         return res.json(MOCK_TASKS);
     }
     try {
         const tasks = await Task.find({ isActive: true });
         res.json(tasks);
     } catch (error) {
+        console.error("Error fetching tasks:", error);
         res.status(500).json({ message: error.message });
     }
 };

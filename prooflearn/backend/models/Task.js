@@ -9,4 +9,4 @@ const TaskSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Task', TaskSchema);
+module.exports = mongoose.models.Task || mongoose.model('Task', TaskSchema);
