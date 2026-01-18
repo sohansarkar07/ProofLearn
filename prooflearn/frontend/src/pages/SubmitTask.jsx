@@ -26,8 +26,10 @@ const SubmitTask = () => {
             alert("Submission success! Waiting for admin verification.");
             navigate('/profile');
         } catch (error) {
-            console.error("Submission Error:", error.response?.data || error.message);
-            alert(`Submission failed: ${error.response?.data?.message || "Internal Server Error"}`);
+            console.error("Submission Error Details:", error.response?.data);
+            const msg = error.response?.data?.message || "Submission failed";
+            const details = error.response?.data?.details || error.response?.data?.error || error.message;
+            alert(`${msg}: ${details}`);
         } finally {
             setIsSubmitting(false);
         }

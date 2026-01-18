@@ -46,18 +46,26 @@ app.use((err, req, res, next) => {
     console.error("SERVER ERROR:", err);
     res.status(500).json({
         message: "Internal Server Error",
-        error: process.env.NODE_ENV === 'production' ? "See logs for details" : err.message,
+        details: err.message, // Return the message directly for debugging
         stack: process.env.NODE_ENV === 'production' ? null : err.stack
     });
 });
 
 // DB Connection Helper (Cached)
 const connectDB = async () => {
+    if (mongoose.connection.readyState === 1) return;
+    if (mongoose.connection.readyState === 2) {
+        // Wait for current connection attempt
+        return new Promise((resolve, reject) => {
+            mongoose.connection.once('connected', resolve);
+            mongoose.connection.once('error', reject);
+        });
+    }
+
     try {
-        if (mongoose.connection.readyState >= 1) return;
         const uri = process.env.MONGODB_URI;
         if (!uri && process.env.NODE_ENV === 'production') {
-            throw new Error("MONGODB_URI is missing in production environment variables.");
+            throw new Error("Environment Variable MONGODB_URI is MISSING in Vercel. Please add it to your project settings.");
         }
         if (!uri) {
             console.warn("MONGODB_URI is not defined in environment variables. Falling back to localhost.");
@@ -67,6 +75,7 @@ const connectDB = async () => {
         console.log('MongoDB Connected successfully');
     } catch (err) {
         console.error('MongoDB Connection Error:', err);
+        throw err; // Re-throw to be caught by ensureDB or global handler
     }
 };
 
