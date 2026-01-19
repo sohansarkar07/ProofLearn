@@ -3,6 +3,10 @@
     "outputDirectory": "prooflearn/frontend/dist",
     "rewrites": [
         {
+            "source": "/api/ai",
+            "destination": "/api/ai.py"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "/api/index.js"
         },

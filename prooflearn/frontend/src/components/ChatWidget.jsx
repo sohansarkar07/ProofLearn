@@ -17,8 +17,8 @@ const ChatWidget = () => {
         setInput("");
 
         try {
-            // Call Python AI Service
-            const response = await fetch('http://localhost:5001/chat', {
+            // Call Vercel Serverless Function (Python)
+            const response = await fetch('/api/ai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: input })
@@ -79,8 +79,8 @@ const ChatWidget = () => {
                             {messages.map(msg => (
                                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                                     <div className={`max-w-[80%] p-3 rounded-2xl text-xs leading-relaxed ${msg.sender === 'user'
-                                            ? 'bg-primary text-black rounded-tr-sm'
-                                            : 'bg-white/10 text-slate-200 rounded-tl-sm border border-white/5'
+                                        ? 'bg-primary text-black rounded-tr-sm'
+                                        : 'bg-white/10 text-slate-200 rounded-tl-sm border border-white/5'
                                         }`}>
                                         {msg.text}
                                     </div>
