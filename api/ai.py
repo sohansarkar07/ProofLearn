@@ -10,6 +10,7 @@ class handler(BaseHTTPRequestHandler):
         data = json.loads(post_data.decode('utf-8'))
         
         # Try getting the key in both uppercase (standard) and lowercase (user input)
+        user_message = data.get('message', '')
         api_key = os.environ.get("GROQ_API_KEY") or os.environ.get("groq_api_key")
         
         response_text = ""
