@@ -9,8 +9,8 @@ class handler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data.decode('utf-8'))
         
-        user_message = data.get('message', '')
-        api_key = os.environ.get("GROQ_API_KEY")
+        # Try getting the key in both uppercase (standard) and lowercase (user input)
+        api_key = os.environ.get("GROQ_API_KEY") or os.environ.get("groq_api_key")
         
         response_text = ""
 
@@ -34,9 +34,7 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 response_text = f"System Error: {str(e)}"
         else:
-             # Debugging: List available keys (security safe, no values)
-             available_keys = ", ".join(list(os.environ.keys()))
-             response_text = f"⚠️ SYSTEM ALERT: GROQ_API_KEY missing. Available Environment Keys: {available_keys}"
+             response_text = "⚠️ SYSTEM ALERT: GROQ_API_KEY missing in Vercel Environment Variables. Please check casing."
 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
