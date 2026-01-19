@@ -2,10 +2,11 @@
     "name": "prooflearn-root",
     "version": "1.0.0",
     "scripts": {
-        "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+        "dev": "concurrently \"npm run frontend\" \"npm run backend\" \"npm run ai\"",
         "build": "npm install --prefix prooflearn/frontend && npm run build --prefix prooflearn/frontend",
         "frontend": "cd prooflearn/frontend && npm run dev",
         "backend": "cd prooflearn/backend && node server.js",
+        "ai": "python prooflearn/ai-service/app.py",
         "install-all": "cd prooflearn/frontend && npm install && cd ../backend && npm install && cd .."
     },
     "devDependencies": {

@@ -2,18 +2,40 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useWeb3 } from '../context/Web3Context';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, ExternalLink, Shield, Wallet, Clock, CheckCircle, Smartphone } from 'lucide-react';
+import { Award, ExternalLink, Shield, Wallet, Clock, CheckCircle, Smartphone, Zap, ChevronRight } from 'lucide-react';
+import SkillGraph from '../components/SkillGraph';
 
 const Profile = () => {
     const { account } = useWeb3();
     const [mySubmissions, setMySubmissions] = useState([]);
+    const [userStats, setUserStats] = useState({ xp: 0, level: 1, skills: {} });
 
     useEffect(() => {
         if (account) {
             const fetchMyData = async () => {
                 const apiUrl = import.meta.env.VITE_API_URL || '';
-                const res = await axios.get(`${apiUrl}/api/submissions`);
-                setMySubmissions(res.data.filter(s => s.learnerAddress?.toLowerCase() === account.toLowerCase()));
+                try {
+                    const [subRes, userRes] = await Promise.all([
+                        axios.get(`${apiUrl}/api/submissions`),
+                        axios.get(`${apiUrl}/api/users/${account}`)
+                    ]);
+                    setMySubmissions(subRes.data.filter(s => s.learnerAddress?.toLowerCase() === account.toLowerCase()));
+
+                    // Mock user stats if endpoint not ready
+                    setUserStats({
+                        xp: userRes.data?.xp || 2450,
+                        level: userRes.data?.level || 5,
+                        skills: userRes.data?.skills || { "Solidity": 80, "React": 65, "DeFi": 40, "Security": 20, "Design": 90 }
+                    });
+                } catch (err) {
+                    console.error("Error fetching profile", err);
+                    // Fallback Mock
+                    setUserStats({
+                        xp: 2450,
+                        level: 5,
+                        skills: { "Solidity": 80, "React": 65, "DeFi": 40, "Security": 20, "Design": 90 }
+                    });
+                }
             };
             fetchMyData();
         }
@@ -57,8 +79,15 @@ const Profile = () => {
 
                             <div className="space-y-4 pt-6 border-t border-white/5">
                                 <div className="flex justify-between items-center text-sm">
+                                    <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Level</span>
+                                    <span className="text-accent font-black text-xl">Lvl {userStats.level}</span>
+                                </div>
+                                <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden">
+                                    <div className="bg-gradient-to-r from-primary to-accent h-full" style={{ width: `${(userStats.xp % 1000) / 10}%` }} />
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
                                     <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Total XP</span>
-                                    <span className="text-primary font-black">2,450 XP</span>
+                                    <span className="text-primary font-black">{userStats.xp} XP</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Missions</span>
@@ -66,6 +95,14 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Skill Graph Widget */}
+                    <div className="glass-panel p-6">
+                        <h3 className="text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <Zap size={14} className="text-yellow-400" /> Skill Matrix
+                        </h3>
+                        <SkillGraph data={userStats.skills} />
                     </div>
                 </div>
 

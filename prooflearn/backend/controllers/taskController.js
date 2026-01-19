@@ -14,7 +14,15 @@ exports.getTasks = async (req, res) => {
         return res.json(MOCK_TASKS);
     }
     try {
-        const tasks = await Task.find({ isActive: true });
+        let tasks = await Task.find({ isActive: true });
+
+        // --- SEEDING LOGIC FOR NEW STRANGERS ---
+        if (tasks.length === 0) {
+            console.log("No tasks found. Seeding initial data...");
+            await Task.insertMany(MOCK_TASKS);
+            tasks = await Task.find({ isActive: true });
+        }
+
         res.json(tasks);
     } catch (error) {
         console.error("Error fetching tasks:", error);

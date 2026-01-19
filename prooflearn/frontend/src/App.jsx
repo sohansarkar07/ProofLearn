@@ -7,6 +7,7 @@ import SubmitTask from './pages/SubmitTask';
 import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
+import ChatWidget from './components/ChatWidget';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PageWrapper = ({ children }) => (
@@ -45,6 +46,7 @@ const App = () => {
                     <div className="mesh-bg" />
                     <Navbar />
                     <AnimatedRoutes />
+                    <ChatWidget />
                 </div>
             </Router>
         </Web3Provider>

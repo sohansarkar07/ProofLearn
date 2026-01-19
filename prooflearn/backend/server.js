@@ -9,7 +9,7 @@ const submissionRoutes = require('./routes/submissionRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
@@ -60,7 +60,7 @@ app.use((err, req, res, next) => {
     console.error("SERVER ERROR:", err);
     res.status(500).json({
         message: "Internal Server Error",
-        details: err.message, // Return the message directly for debugging
+        details: err.message,
         stack: process.env.NODE_ENV === 'production' ? null : err.stack
     });
 });
@@ -69,7 +69,6 @@ app.use((err, req, res, next) => {
 const connectDB = async () => {
     if (mongoose.connection.readyState === 1) return;
     if (mongoose.connection.readyState === 2) {
-        // Wait for current connection attempt
         return new Promise((resolve, reject) => {
             mongoose.connection.once('connected', resolve);
             mongoose.connection.once('error', reject);
@@ -77,19 +76,33 @@ const connectDB = async () => {
     }
 
     try {
-        const uri = process.env.MONGODB_URI;
-        if (!uri && process.env.NODE_ENV === 'production') {
-            throw new Error("Environment Variable MONGODB_URI is MISSING in Vercel. Please add it to your project settings.");
+        let uri = process.env.MONGODB_URI;
+
+        // Attempt to connect to provided URI first (if valid)
+        if (uri) {
+            console.log("Connecting to standard MongoDB URI...");
+            try {
+                await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
+                console.log('MongoDB Connected successfully');
+                return;
+            } catch (err) {
+                console.warn("Standard MongoDB connection failed, falling back to In-Memory DB.", err.message);
+            }
         }
-        if (!uri) {
-            console.warn("MONGODB_URI is not defined in environment variables. Falling back to localhost.");
-        }
-        console.log("Connecting to MongoDB...");
-        await mongoose.connect(uri || 'mongodb://localhost:27017/prooflearn');
-        console.log('MongoDB Connected successfully');
+
+        // Fallback or default to In-Memory DB
+        console.log("Starting In-Memory MongoDB...");
+        const { MongoMemoryServer } = require('mongodb-memory-server');
+        const mongod = await MongoMemoryServer.create();
+        const memoryUri = mongod.getUri();
+        console.log("In-Memory MongoDB started at:", memoryUri);
+
+        await mongoose.connect(memoryUri);
+        console.log('In-Memory MongoDB Connected successfully');
+
     } catch (err) {
         console.error('MongoDB Connection Error:', err);
-        throw err; // Re-throw to be caught by ensureDB or global handler
+        throw err;
     }
 };
 

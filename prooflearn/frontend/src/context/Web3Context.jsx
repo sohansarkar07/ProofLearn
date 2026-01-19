@@ -45,11 +45,43 @@ export const Web3Provider = ({ children }) => {
                 const _signer = await _provider.getSigner();
                 const _network = await _provider.getNetwork();
 
-                console.log("Connected account:", accounts[0]);
-                setAccount(accounts[0]);
-                setProvider(_provider);
-                setSigner(_signer);
-                setNetwork(_network);
+                const walletAddress = accounts[0];
+
+                // --- SIWE (Sign-In With Ethereum) Logic ---
+                try {
+                    const message = `Login to ProofLearn. Timestamp: ${Date.now()}`;
+                    const signature = await _signer.signMessage(message);
+
+                    // Verify with Backend
+                    // Dynamic import or use standard fetch if axios not available in Context (it usually isn't by default in snippets)
+                    // But we used axios in Pages. Let's use fetch for zero-dependency in Context or assume axios is available. 
+                    // To be safe, I'll use fetch.
+                    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                    const response = await fetch(`${apiUrl}/api/users/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ walletAddress, signature, message })
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        throw new Error(errData.message || "Login failed");
+                    }
+
+                    const userData = await response.json();
+                    console.log("Backend Auth Success:", userData);
+
+                    setAccount(walletAddress);
+                    setProvider(_provider);
+                    setSigner(_signer);
+                    setNetwork(_network);
+
+                } catch (authError) {
+                    console.error("Authentication Failed:", authError);
+                    alert(`Authentication Failed: ${authError.message}`);
+                    return; // Stop connection if auth fails
+                }
+
             } catch (error) {
                 console.error("Wallet connection error:", error);
                 if (error.code === 4001) {

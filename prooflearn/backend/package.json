@@ -16,6 +16,7 @@
     "dotenv": "^17.2.3",
     "ethers": "^6.16.0",
     "express": "^5.2.1",
+    "mongodb-memory-server": "^11.0.1",
     "mongoose": "^9.1.4"
   }
 }
