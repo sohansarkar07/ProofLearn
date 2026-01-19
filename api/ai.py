@@ -34,7 +34,9 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 response_text = f"System Error: {str(e)}"
         else:
-             response_text = "⚠️ SYSTEM ALERT: GROQ_API_KEY missing in Vercel Environment Variables."
+             # Debugging: List available keys (security safe, no values)
+             available_keys = ", ".join(list(os.environ.keys()))
+             response_text = f"⚠️ SYSTEM ALERT: GROQ_API_KEY missing. Available Environment Keys: {available_keys}"
 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
