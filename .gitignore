@@ -34,3 +34,12 @@ typechain-types/
 # System Files
 Thumbs.db
 desktop.ini
+
+# Secrets
+DEPLOYMENT_KEYS.txt
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc

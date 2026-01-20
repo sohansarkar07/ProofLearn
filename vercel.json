@@ -1,25 +1,19 @@
 {
     "version": 2,
+    "buildCommand": "npm install --prefix prooflearn/frontend && npm run build --prefix prooflearn/frontend",
     "outputDirectory": "prooflearn/frontend/dist",
     "rewrites": [
         {
             "source": "/api/ai",
-            "destination": "/api/ai.py"
+            "destination": "https://your-ai-service-url.onrender.com/chat"
         },
         {
             "source": "/api/(.*)",
-            "destination": "/api/index.js"
+            "destination": "https://your-backend-url.onrender.com/api/$1"
         },
         {
             "source": "/(.*)",
-            "destination": "/prooflearn/frontend/dist/index.html"
+            "destination": "/$1"
         }
-    ],
-    "functions": {
-        "api/index.js": {
-            "includeFiles": "prooflearn/backend/**",
-            "memory": 1024,
-            "maxDuration": 10
-        }
-    }
+    ]
 }
