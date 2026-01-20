@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useWeb3 } from '../context/Web3Context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Users, CheckCircle, XCircle, ExternalLink, ShieldCheck, Activity, Database } from 'lucide-react';
+import API_BASE_URL from '../config';
 
 const AdminDashboard = () => {
     const [submissions, setSubmissions] = useState([]);
@@ -11,8 +12,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         const fetchSubmissions = async () => {
-            const apiUrl = import.meta.env.VITE_API_URL || '';
-            const res = await axios.get(`${apiUrl}/api/submissions`);
+            const res = await axios.get(`${API_BASE_URL}/api/submissions`);
             setSubmissions(res.data);
             setStats({
                 total: res.data.length,
@@ -25,8 +25,7 @@ const AdminDashboard = () => {
 
     const handleVerify = async (id, status, learner, taskId) => {
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || '';
-            await axios.patch(`${apiUrl}/api/submissions/verify`, {
+            await axios.patch(`${API_BASE_URL}/api/submissions/verify`, {
                 submissionId: id,
                 status,
                 skillName: "Web3 Developer",

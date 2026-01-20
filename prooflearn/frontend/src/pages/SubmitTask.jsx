@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useWeb3 } from '../context/Web3Context';
 import { motion } from 'framer-motion';
 import { Send, Link as LinkIcon, CheckCircle2, ChevronLeft, Shield } from 'lucide-react';
+import API_BASE_URL from '../config';
 
 const SubmitTask = () => {
     const { taskId } = useParams();
@@ -16,9 +17,8 @@ const SubmitTask = () => {
         e.preventDefault();
         if (!account) return alert("Please connect wallet!");
 
-        const apiUrl = import.meta.env.VITE_API_URL || '';
         try {
-            await axios.post(`${apiUrl}/api/submissions`, {
+            await axios.post(`${API_BASE_URL}/api/submissions`, {
                 taskId,
                 learnerAddress: account,
                 proofUrl

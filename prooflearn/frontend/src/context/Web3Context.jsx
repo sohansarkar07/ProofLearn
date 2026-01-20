@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import API_BASE_URL from '../config';
 
 const Web3Context = createContext();
 
@@ -53,11 +54,7 @@ export const Web3Provider = ({ children }) => {
                     const signature = await _signer.signMessage(message);
 
                     // Verify with Backend
-                    // Dynamic import or use standard fetch if axios not available in Context (it usually isn't by default in snippets)
-                    // But we used axios in Pages. Let's use fetch for zero-dependency in Context or assume axios is available. 
-                    // To be safe, I'll use fetch.
-                    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                    const response = await fetch(`${apiUrl}/api/users/login`, {
+                    const response = await fetch(`${API_BASE_URL}/api/users/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ walletAddress, signature, message })

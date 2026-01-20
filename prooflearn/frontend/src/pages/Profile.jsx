@@ -4,6 +4,7 @@ import { useWeb3 } from '../context/Web3Context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Award, ExternalLink, Shield, Wallet, Clock, CheckCircle, Smartphone, Zap, ChevronRight } from 'lucide-react';
 import SkillGraph from '../components/SkillGraph';
+import API_BASE_URL from '../config';
 
 const Profile = () => {
     const { account } = useWeb3();
@@ -13,11 +14,10 @@ const Profile = () => {
     useEffect(() => {
         if (account) {
             const fetchMyData = async () => {
-                const apiUrl = import.meta.env.VITE_API_URL || '';
                 try {
                     const [subRes, userRes] = await Promise.all([
-                        axios.get(`${apiUrl}/api/submissions`),
-                        axios.get(`${apiUrl}/api/users/${account}`)
+                        axios.get(`${API_BASE_URL}/api/submissions`),
+                        axios.get(`${API_BASE_URL}/api/users/${account}`)
                     ]);
                     setMySubmissions(subRes.data.filter(s => s.learnerAddress?.toLowerCase() === account.toLowerCase()));
 

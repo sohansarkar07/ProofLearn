@@ -3,6 +3,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, ChevronRight, Star, Clock, Trophy } from 'lucide-react';
+import API_BASE_URL from '../config';
 
 // Failsafe Mock Data
 const MOCK_TASKS = [
@@ -19,8 +20,7 @@ const Marketplace = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || '';
-                const res = await axios.get(`${apiUrl}/api/tasks`);
+                const res = await axios.get(`${API_BASE_URL}/api/tasks`);
                 if (res.data && res.data.length > 0) {
                     setTasks(res.data);
                 } else {
