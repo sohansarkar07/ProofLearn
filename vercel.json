@@ -5,11 +5,11 @@
     "rewrites": [
         {
             "source": "/api/ai",
-            "destination": "https://your-ai-service-url.onrender.com/chat"
+            "destination": "https://prooflearn-backend2.onrender.com/api/ai"
         },
         {
             "source": "/api/(.*)",
-            "destination": "https://your-backend-url.onrender.com/api/$1"
+            "destination": "https://prooflearn-backend2.onrender.com/api/$1"
         },
         {
             "source": "/(.*)",
