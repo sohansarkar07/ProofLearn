@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "buildCommand": "cd frontend && npm install && npm run build",
+    "outputDirectory": "frontend/dist",
+    "rewrites": [
+        {
+            "source": "/api/ai",
+            "destination": "https://your-ai-service-url.onrender.com/chat"
+        },
+        {
+            "source": "/api/(.*)",
+            "destination": "https://your-backend-url.onrender.com/api/$1"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/$1"
+        }
+    ]
+}
